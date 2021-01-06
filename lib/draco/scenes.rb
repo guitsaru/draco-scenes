@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 module Draco
+  # Public: A plugin to enable scene defintions for a Draco::World.
   module Scenes
+    # Internal: An error for when a scene definition was given both a block and a class.
     class MultipleSceneDefinitionsError < StandardError
       def initialize
         super("A scene can be defined as a class or a block, but not both.")
       end
     end
 
+    # Internal: An error saying the desired scene was not defined.
     class UndefinedSceneError < StandardError; end
 
     VERSION = "0.1.0"
@@ -19,11 +22,12 @@ module Draco
       mod.instance_variable_set(:@default_scene, nil)
     end
 
+    # Internal: The plugin code for a Draco::World
     module InstanceMethods
       def after_initialize
         @scenes = {}
-        
-        scene_definitions.each do  |name, klass|
+
+        scene_definitions.each do |name, klass|
           @scenes[name] = klass.new
         end
 
@@ -52,12 +56,14 @@ module Draco
 
       def scene=(name)
         raise UndefinedSceneError, "No scene defined with name #{name.inspect}" unless @scenes[name]
+
         @current_scene = @scenes[name]
       end
 
       def default_scene
         defined = self.class.instance_variable_get(:@default_scene)
         raise UndefinedSceneError, "No scene defined with name #{defined.inspect}" unless @scenes[defined]
+
         @scenes[defined]
       end
 
@@ -66,8 +72,9 @@ module Draco
       end
     end
 
+    # Internal: The class methods defining the scene DSL
     module ClassMethods
-      def scene(name, maybe_class=nil, &block)
+      def scene(name, maybe_class = nil, &block)
         raise Draco::Scenes::MultipleSceneDefinitionsError if maybe_class && block
 
         @default_scene ||= name

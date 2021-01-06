@@ -11,7 +11,7 @@ end
 class TestSystem < Draco::System
   filter TestComponent
 
-  def tick(args)
+  def tick(_args)
     entities.each { |entity| entity.test_component.tested = true }
   end
 end
