@@ -1,28 +1,48 @@
 # Draco::Scenes
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/draco/scenes`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'draco-scenes'
-```
-
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install draco-scenes
+This library provides a way to define multiple scenes within a world for the [Draco](https://github.com/guitsaru/draco) ECS library.
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+class Inventory < Draco::World
+  entity Backpack
+
+  systems RenderInventory,
+          HandleInventoryInput
+end
+
+class World < Draco::World
+  include Draco::Scenes
+
+  entity Player
+
+  systems Render
+
+  default_scene :overworld
+
+  scene :overworld do
+    entity Map
+    entity Camera
+
+    systems HandleMovementInput
+  end
+
+  scene :pause do
+    entity ResumeButton
+    entity QuitButton
+
+    systems HandleMenuInput
+  end
+
+  scene :inventory, Inventory
+end
+
+world = World.new
+world.scene = :pause
+```
+
+A scene can either be defined inline by using a block or can be defined as a `Draco::World` in another class. When the `#tick` method is run on the world, it runs the systems for the current scene and itself on the combined entities of the scene and the world.
 
 ## Development
 

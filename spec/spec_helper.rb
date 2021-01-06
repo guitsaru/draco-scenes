@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "draco"
 require "draco/scenes"
 
 RSpec.configure do |config|
