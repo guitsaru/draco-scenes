@@ -13,7 +13,7 @@ module Draco
     # Internal: An error saying the desired scene was not defined.
     class UndefinedSceneError < StandardError; end
 
-    VERSION = "0.1.0"
+    VERSION = "0.2.0"
 
     def self.included(mod)
       mod.extend(ClassMethods)
